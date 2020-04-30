@@ -24,12 +24,12 @@ An estimate of the tail index \eqn{\gamma}.
 }
 
 \references{
-  de Haan, L. and Ferreira, A. (2006). Extreme Value Theory: An Introduction. \emph{Springer}-\emph{Verlag}, New York.
+de Haan, L. and Ferreira, A. (2006). Extreme Value Theory: An Introduction. \emph{Springer}-\emph{Verlag}, New York.
 }
 
 \author{
 	Simone Padoan, \email{simone.padoan@unibocconi.it},
-	\url{http://faculty.unibocconi.it/simonepadoan};
+	\url{http://mypage.unibocconi.it/simonepadoan/};
 	Gilles Stupfler, \email{gilles.stupfler@ensai.fr},
 	\url{http://ensai.fr/en/equipe/stupfler-gilles/}
 }
@@ -39,7 +39,10 @@ An estimate of the tail index \eqn{\gamma}.
 }
 
 \examples{
-# Estimation of the tail index for the AR(1) with Student-t innovations
+# Tail index estimation based on the Moment estimator obtained with
+# 1-dimensional data simulated from an AR(1) with univariate Student-t
+# distributed innovations
+
 tsDist <- "studentT"
 tsType <- "AR"
 

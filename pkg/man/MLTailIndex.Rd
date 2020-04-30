@@ -38,6 +38,8 @@ MLTailIndex(data, k, var=FALSE, varType="asym-Dep", bigBlock=NULL,
 }
 
 \references{
+  Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{http://arxiv.org/abs/2004.04078}.
+
   Drees, H. (2000). Weighted approximations of tail processes for \eqn{\beta}{beta}-mixing random variables.
   \emph{Annals of Applied Probability}, \bold{10}, 1274-1301.
 
@@ -49,7 +51,7 @@ MLTailIndex(data, k, var=FALSE, varType="asym-Dep", bigBlock=NULL,
 
 \author{
 	Simone Padoan, \email{simone.padoan@unibocconi.it},
-	\url{http://faculty.unibocconi.it/simonepadoan};
+	\url{http://mypage.unibocconi.it/simonepadoan/};
 	Gilles Stupfler, \email{gilles.stupfler@ensai.fr},
 	\url{http://ensai.fr/en/equipe/stupfler-gilles/}
 }
@@ -59,7 +61,10 @@ MLTailIndex(data, k, var=FALSE, varType="asym-Dep", bigBlock=NULL,
 }
 
 \examples{
-# Estimation of the tail index for the AR(1) with Student-t innovations
+# Tail index estimation based on the Maximum Likelihood estimator obtained with
+# 1-dimensional data simulated from an AR(1) with univariate Student-t
+# distributed innovations
+
 tsDist <- "studentT"
 tsType <- "AR"
 

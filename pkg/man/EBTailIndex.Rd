@@ -33,14 +33,14 @@ EBTailIndex(data, tau, est=NULL)
 }
 
 \references{
-  Padoan A. S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:INSERT.
+  Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{http://arxiv.org/abs/2004.04078}.
 
   Daouia, A., Girard, S. and Stupfler, G. (2018). Estimation of tail risk based on extreme expectiles. \emph{Journal of the Royal Statistical Society: Series B}, \bold{80}, 263-292.
 }
 
 \author{
 	Simone Padoan, \email{simone.padoan@unibocconi.it},
-	\url{http://faculty.unibocconi.it/simonepadoan};
+	\url{http://mypage.unibocconi.it/simonepadoan/};
 	Gilles Stupfler, \email{gilles.stupfler@ensai.fr},
 	\url{http://ensai.fr/en/equipe/stupfler-gilles/}
 }
@@ -50,7 +50,9 @@ EBTailIndex(data, tau, est=NULL)
 }
 
 \examples{
-# Estimation of the tail index for the AR(1) with Student-t innovations
+# Tail index estimation based on the Expectile based estimator obtained with data
+# simulated from an AR(1) with 1-dimensional Student-t distributed innovations
+
 tsDist <- "studentT"
 tsType <- "AR"
 

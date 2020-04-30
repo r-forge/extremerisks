@@ -1,4 +1,5 @@
-export(MomTailIndex, MLTailIndex, HTailIndex, EBTailIndex, extQuantile, estExpectiles, predExpectiles, expectiles, rtimeseries)
+export(MomTailIndex, MLTailIndex, HTailIndex, EBTailIndex, extQuantile, estExpectiles, predExpectiles, expectiles, rtimeseries, estExtLevel, QuantMES, ExpectMES,
+rbtimeseries)
 
 importFrom("stats", "df", "qf", "dnorm", "dt", "ecdf", "integrate", "optim",
            "pnorm", "pt", "quantile", "rnorm", "runif", "dunif", "uniroot",
@@ -8,6 +9,6 @@ importFrom("stats", "df", "qf", "dnorm", "dt", "ecdf", "integrate", "optim",
 importFrom("evd", "rbvevd", "abvnonpar", "amvnonpar", "pfrechet", "pgumbel", 
 	   "pgev", "abvevd", "hbvevd", "rgpd", "rfrechet", "pgpd", "qgpd")
 
-importFrom("TSA", "garch.sim")
-
 importFrom("mvtnorm", "rmvt", "rmvnorm")
+
+importFrom("copula", "rCopula", "gumbelCopula", "normalCopula")

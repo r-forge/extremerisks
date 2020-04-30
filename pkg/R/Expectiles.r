@@ -97,8 +97,16 @@ expect_armax_ts <- function(ndata, burnin, corr, scale, shape, nsim, tau, estMet
 }
 
 # GARCH model
-expect_garch_ts <- function(ndata, burnin, alpha0, beta0, tau, estMethod){
-  data <- garch.sim(alpha=alpha0, beta=beta0, n=ndata, ntrans=burnin)
+expect_garch_ts <- function(ndata, burnin, alpha0, alpha, beta, tau, estMethod){
+  nsim <- ndata+burnin
+  data <- rep(0, nsim)
+  sigma <- rep(0, nsim)
+  z <- rnorm(nsim)
+  for(i in 1:(nsim-1)){
+    sigma[i+1] <- sqrt(alpha[1] + alpha[2] * data[i]^2 + beta * sigma[i]^2)
+    data[i+1] <- sigma[i+1] * z[i]
+  }
+  data <- data[(burnin+1):nsim]
   res <- estExpectiles(data, tau, estMethod)
   return(res)
 }
@@ -242,9 +250,9 @@ expectiles <- function(par, tau, tsDist="gPareto", tsType="IID", trueMethod="tru
     }}
     if(tsDist=="Gaussian"){
       if(tsType=="GARCH"){
-        alpha0 <- par[1:2]
-        beta0 <- par[3]
-        res <- replicate(nrep, expect_garch_ts(ndata, burnin, alpha0, beta0, tau, estMethod))
+        alpha <- par[1:2]
+        beta <- par[3]
+        res <- replicate(nrep, expect_garch_ts(ndata, burnin, alpha, beta, tau, estMethod))
         res <- mean(res)
       }
     }

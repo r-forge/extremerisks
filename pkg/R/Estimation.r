@@ -12,7 +12,7 @@
 ### for estimating (point and interval estimation)    ###
 ### risk measures as Value-At-Risk and Expectile      ###
 ### for i.i.d. and dependent data                     ###
-### Last change: 2020-02-28                           ###
+### Last change: 2020-04-05                           ###
 #########################################################
 
 
@@ -215,6 +215,71 @@ estExpectileVar <- function(data, ndata, tau, est, tailest, varType, bigBlock,
   }
 }
 
+# compute an estimate of the asymptotic variance of the Hill estimator
+# for time series and iid observations
+estHillVar <- function(data, ndata, gammaHat, varType, bigBlock, smallBlock, k){
+# Main body:
+# computes the asymptotic variance for iid data
+if(varType=="asym-Ind") {
+  AdjVar <- 1
+  mu <- 2
+}
+# computes the asymptotic variance for serial dependence data
+if(varType=="asym-Dep"){
+  # computes the dependence component
+  t <- as.numeric(quantile(data, 1-k/ndata))
+  sizeBlock <- bigBlock+smallBlock
+  indx <- seq(1, ndata, by=sizeBlock)[1:floor(ndata/sizeBlock)]
+  indx <- array(indx, c(length(indx),1))
+  sexc <- apply(indx, 1, numexceed, data=data, t=t, rn=bigBlock)
+  AdjVar <- ndata/(bigBlock*k) * var(sexc)
+  # set the estimated gamma index power to the stadard value 2
+  mu <- 2
+}
+# computes the asymptotic variance for serial dependence data with adjustment
+if(varType=="asym-Dep-Adj"){
+  # computes the dependence component
+  t <- as.numeric(quantile(data, 1-k/ndata))
+  sizeBlock <- bigBlock+smallBlock
+  indx <- seq(1, ndata, by=sizeBlock)[1:floor(ndata/sizeBlock)]
+  indx <- array(indx, c(length(indx),1))
+  sexc <- apply(indx, 1, numexceed, data=data, t=t, rn=bigBlock)
+  AdjVar <- ndata/(bigBlock*k) * var(sexc)
+  # set the estimated gamma index power to the ajusted value
+  seriesDep <-as.numeric(acf(data, plot=FALSE)$acf)
+  isStrong <- all(seriesDep[2:25]>=.1)
+  if(isStrong){
+    if(gammaHat > (1/5)) mu <- 1/2
+    if((gammaHat > (1/8)) & (gammaHat <= (1/5))) mu <- 1
+    if(gammaHat <= (1/8)) mu <- 2
+  }
+  else{
+    if(gammaHat > (1/3)) mu <- 1/2
+    if((gammaHat > (1/5)) & (gammaHat <= (1/3))) mu <- 1
+    if(gammaHat <= (1/5)) mu <- 2
+  }
+}
+# computes the asymptotic variance
+res <- gammaHat^mu * AdjVar
+return(res)
+}
+
+
+# computes the Quantile-Based marginal Expected Shortfall
+# @ the intermediate level
+QBmarExpShortF <- function(data, tau, n, q){
+  res <- sum(data[,1]* (data[,1]>0 & data[,2]>q))
+  return(res / (n*(1-tau)))
+}
+
+# computes the Expectile-Based marginal Expected Shortfall
+# @ the intermediate level
+EBmarExpShortF <- function(data, tau, n, xi){
+  res <- sum(data[,1]* (data[,1]>0 & data[,2]>xi))
+  return(res / sum(data[,2]>xi))
+}
+
+
 #########################################################
 ### END
 ### Sub-routines (HIDDEN FUNCTIONS)
@@ -233,30 +298,6 @@ estExpectileVar <- function(data, ndata, tau, est, tailest, varType, bigBlock,
 ###
 ################## UNIVARIATE CASE ######################
 
-# Estimation of the tail index using the Hill estimator
-#HTailIndex <- function(data, k, var=FALSE, bigblock=NULL, smallBlock=NULL, alpha=0.025){
-#  # main body:
-#  if(is.null(k)) stop("Enter a value for the parameter 'k' ")
-#  # compute the sample size
-#  ndata <- length(data)
-#  dataord <- sort(data, decreasing=TRUE)
-#  gammaHat <- mean(log(dataord[1:k])) - log(dataord[k+1])
-#
-#  VarGamHat <- NULL
-#  CIgamHat <- NULL
-#  if(var){
-#      t <- as.numeric(quantile(data, 1-k/ndata))
-#      sizeBlock <- bigBlock+smallBlock
-#      indx <- seq(1, ndata, by=sizeBlock)[1:floor(ndata/sizeBlock)]
-#      indx <- array(indx, c(length(indx),1))
-#      sexc <- apply(indx, 1, numexceed, data=data, t=t, rn=bigBlock)
-#
-#      VarGamHat <- (gammaHat)^2 * ndata/(bigblock*k) * var(sexc)
-#      ME <- sqrt(VarGamHat)*qnorm(1-alpha) / sqrt(k)
-#      CIgamHat <- c(gammaHat-ME, gammaHat+ME)
-#    }
-#  return(list(gammaHat=gammaHat, VarGamHat=VarGamHat, CIgamHat=CIgamHat))
-#}
 
 # Estimation of the tail index using the Hill estimator
 HTailIndex <- function(data, k, var=FALSE, varType="asym-Dep", bias=FALSE,
@@ -269,7 +310,8 @@ HTailIndex <- function(data, k, var=FALSE, varType="asym-Dep", bias=FALSE,
 
   # main body:
   if(is.null(k)) stop("Enter a value for the parameter 'k' ")
-  if(!any(varType=="asym-Dep", varType=="asym-Ind")) stop("The parameter 'varType' can only be 'asym-Dep' or 'asym-Ind' ")
+  if(!any(varType=="asym-Dep", varType=="asym-Dep-Adj", varType=="asym-Ind"))
+  stop("The parameter 'varType' can only be 'asym-Dep', 'asym-Dep-Adj' or 'asym-Ind' ")
   # compute the sample size
   ndata <- length(data)
   dataord <- sort(data, decreasing=TRUE)
@@ -283,24 +325,13 @@ HTailIndex <- function(data, k, var=FALSE, varType="asym-Dep", bias=FALSE,
     AdjExtQHat <- bt$adjust
   }
   # computes the asymptotic variance of the Hill estimator
-  if(var){
-    AdjVar <- 1
-    if(varType=="asym-Dep"){
-      t <- as.numeric(quantile(data, 1-k/ndata))
-      sizeBlock <- bigBlock+smallBlock
-      indx <- seq(1, ndata, by=sizeBlock)[1:floor(ndata/sizeBlock)]
-      indx <- array(indx, c(length(indx),1))
-      sexc <- apply(indx, 1, numexceed, data=data, t=t, rn=bigBlock)
-      AdjVar <- ndata/(bigBlock*k) * var(sexc)
-    }
-    # Computes the asymptotic variance
-    VarGamHat <- gammaHat^2 * AdjVar
+  if(var) {
+    VarGamHat <- estHillVar(data, ndata, gammaHat, varType, bigBlock, smallBlock, k)
     # Computes the margin error
     ME <- sqrt(VarGamHat)*qnorm(1-alpha/2) / sqrt(k)
     # Defines an approximate (1-alpha)100% confidence interval for the tail index
     CIgamHat <- c((gammaHat-BiasGamHat)-ME, (gammaHat-BiasGamHat)+ME)
   }
-
   return(list(gammaHat=gammaHat,
               VarGamHat=VarGamHat,
               CIgamHat=CIgamHat,
@@ -404,7 +435,8 @@ extQuantile <- function(data, tau, tau1, var=FALSE, varType="asym-Dep", bias=FAL
   # Estimation of the quantile at the intermediate level based on the empirical quantile
   QHat <- as.numeric(quantile(data, tau))
   # Estimation of the tail index and related quantities using the Hill estimator
-  estHill <- HTailIndex(data, k, var, varType, bias, bigBlock, smallBlock, alpha)
+  if(varType=="asym-Alt-Dep") estHill <- HTailIndex(data, k)
+  else estHill <- HTailIndex(data, k, var, varType, bias, bigBlock, smallBlock, alpha)
 
   # Computes a an estimate of the tail index with a bias-correction
   gammaHat <- estHill$gammaHat - estHill$BiasGamHat
@@ -420,7 +452,7 @@ extQuantile <- function(data, tau, tau1, var=FALSE, varType="asym-Dep", bias=FAL
     # variance is estimated after correcting the tail index estimate by the bias correction
     VarExQHat <- estHill$VarGamHat
 
-    if((varType=="asym-Dep") & (!bias)){
+    if((varType=="asym-Alt-Dep") & (!bias)){
       # Drees (2003) approach
       j <- max(2, ceiling(ndata*(1-tau1)))
       VarExQHat <- DHVar(data, tau, tau1, j, k, ndata)
@@ -459,7 +491,7 @@ estExpectiles <- function(data, tau, method="LAWS", tailest="Hill", var=FALSE,
     u <- as.numeric(quantile(data, tau))
     ExpctHat <- optim(u, costfun, method="BFGS", tau=tau, data=data)$par
     if(var){
-      if(any(is.null(bigBlock), is.null(smallBlock))) stop("Insert the value of the big-blocks and small-blocks")
+      if(varType!="asym-Ind" & any(is.null(bigBlock), is.null(smallBlock))) stop("Insert the value of the big-blocks and small-blocks")
       VarExpHat <- estExpectileVar(data, ndata, tau, ExpctHat, tailest, varType,
                                   bigBlock, smallBlock, k)
 
@@ -489,7 +521,7 @@ estExpectiles <- function(data, tau, method="LAWS", tailest="Hill", var=FALSE,
 # Prediction of expectiles at the extreme level tau1 beyond the observed data
 predExpectiles <- function(data, tau, tau1, method="LAWS", tailest="Hill", var=FALSE,
                           varType="asym-Dep", bias=FALSE, bigBlock=NULL, smallBlock=NULL,
-                          k=NULL, alpha=0.05){
+                          k=NULL, alpha_n=NULL, alpha=0.05){
   # initialization
   EExpcHat <- NULL
   VarExtHat <- NULL
@@ -514,6 +546,8 @@ predExpectiles <- function(data, tau, tau1, method="LAWS", tailest="Hill", var=F
     AdjExtQHat <- estHill$AdjExtQHat
   }
   if(tailest=="ExpBased") gammaHat <- EBTailIndex(data, tau)
+  # Estimation of the extreme level if requested
+  if(is.null(tau1)) tau1 <- estExtLevel(alpha_n, gammaHat=gammaHat)$tauHat
 
   # Estimation of the expectile at the extreme level based on the LAWS estimator
   if(method=="LAWS"){
@@ -547,6 +581,156 @@ predExpectiles <- function(data, tau, tau1, method="LAWS", tailest="Hill", var=F
   }
   return(list(EExpcHat=EExpcHat, VarExtHat=VarExtHat, CIExpct=CIExpct))
 }
+
+# Given the confidence level (1-alpha_n) of an extreme quantile
+# computes an point and interval estimate of the extreme level tau'_n given
+estExtLevel <- function(alpha_n, data=NULL, gammaHat=NULL, VarGamHat=NULL,
+                        tailest="Hill", k=NULL, var=FALSE, varType="asym-Dep",
+                        bigBlock=NULL, smallBlock=NULL, alpha=0.05){
+  # initialize output
+  tauHat <- NULL
+  tauVar <- NULL
+  tauCI <- NULL
+  if(is.null(gammaHat)){
+    if(is.null(data)) stop("Insert a data sample")
+    if(is.null(k)) stop("insert a value for the intermediate sequence")
+    if(tailest=="Hill") {
+      res <- HTailIndex(data, k, var, varType, bigBlock=bigBlock,
+                        smallBlock=smallBlock)
+      gammaHat <- res$gammaHat
+      VarGamHat <- res$VarGamHat
+    }
+    if(tailest=="ML") {
+      res <- MLTailIndex(data, k, var, varType, bigBlock=bigBlock,
+                        smallBlock=smallBlock)
+      gammaHat <- res$gammaHat
+      VarGamHat <- res$VarGamHat
+    }
+    if(tailest=="Moment") gammaHat <- MomTailIndex(data, k)
+    if(tailest=="ExpBased") gammaHat <- EBTailIndex(data, 1-k/length(data))
+  }
+  # computes a point estimates of the extreme level
+  tauHat <- 1 - (1 - alpha_n) * gammaHat / (1 - gammaHat)
+  if(!is.null(VarGamHat)){
+    # computes the variance of the tau estimator using the delta method
+    tauVar <- VarGamHat * (alpha_n-1)^2 / (1-gammaHat)^4
+    # compute an symptotic confidence interval for the extreme level
+    if(!is.null(k)){
+      ME <- qnorm(1-alpha/2) * sqrt(tauVar / k)
+      tauCI <- c(tauHat - ME, tauHat + ME)
+    }
+  }
+  return(list(tauHat=tauHat, tauVar=tauVar, tauCI=tauCI))
+}
+
+#########################################################
+###
+### Estimation of the Quantile-Based marginal
+### Expected Shortfall
+### @ the extreme level
+###
+#########################################################
+
+QuantMES <- function(data, tau, tau1, var=FALSE, varType="asym-Dep", bias=FALSE,
+                     bigBlock=NULL, smallBlock=NULL, k=NULL, alpha=0.05){
+  VarHatQMES <- NULL
+  CIHatQMES <- NULL
+  CIHatQMES <- NULL
+
+  # main body:
+  isNk <- is.null(k)
+  isNtau <- is.null(tau)
+  if(isNk & isNtau) stop("Enter a value for at least one of the two parameters 'tau' and 'k' ")
+  # compute the sample size
+  ndata <- nrow(data)
+  if(isNk) k <- floor(ndata*(1-tau))
+  if(isNtau) tau <- 1-k/ndata
+
+  # Estimation of the quantile at the intermediate level based on the empirical quantile
+  QHat <- as.numeric(quantile(data[,2], tau))
+  # Estimation of the tail index and related quantities using the Hill estimator
+  if(varType=="asym-Alt-Dep") estHill <- HTailIndex(data[,1], k)
+  else estHill <- HTailIndex(data[,1], k, var, varType, bias, bigBlock, smallBlock, alpha)
+  # Computes a an estimate of the tail index with a bias-correction
+  gammaHat <- estHill$gammaHat - estHill$BiasGamHat
+  # Estimation of the QB marginal Expected Shortfall @ the intermediate level
+  QMESt <- QBmarExpShortF(data, tau, ndata, QHat)
+  # Estimation of the QB marginal Expected Shortfall @ the intermediate level
+  QMESt1 <- ((1-tau1)/(1-tau))^(-gammaHat) * QMESt
+  # Estimation of the asymptotic variance of the Hill estimator
+  if(var){
+    # The default approach for computing the asymptotic variance with serial dependent observations
+    # is the method proposed by Drees (2003). In this case it is assumed that there is no bias term
+    # If it is assumed that the Hill estimator requires a bias correction then the the asymptotic
+    # variance is estimated after correcting the tail index estimate by the bias correction
+    VarHatQMES <- estHill$VarGamHat
+
+    if((varType=="asym-Alt-Dep") & (!bias)){
+      # Drees (2003) approach
+      j <- max(2, ceiling(ndata*(1-tau1)))
+      VarHatQMES <- DHVar(data, tau, tau1, j, k, ndata)
+    }
+    # compute lower and upper bounds of the (1-alpha)% CI
+    K <- sqrt(VarHatQMES)*log((1-tau)/(1-tau1))/sqrt(k)
+    lbound <- QMESt1 * exp(qnorm(alpha/2)*K)
+    ubound <- QMESt1 * exp(qnorm(1-alpha/2)*K)
+    CIHatQMES <- c(lbound, ubound)
+  }
+  return(list(HatQMES=QMESt1, VarHatQMES=VarHatQMES, CIHatQMES=CIHatQMES))
+}
+
+ExpectMES <- function(data, tau, tau1, method="LAWS", var=FALSE, varType="asym-Dep",
+                      bias=FALSE, bigBlock=NULL, smallBlock=NULL, k=NULL,
+                      alpha_n=NULL, alpha=0.05){
+  VarHatXMES <- NULL
+  CIHatXMES <- NULL
+  CIHatXMES <- NULL
+  # main body:
+  isNk <- is.null(k)
+  isNtau <- is.null(tau)
+  if(isNk & isNtau) stop("Enter a value for at least one of the two parameters 'tau' and 'k' ")
+  # compute the sample size
+  ndata <- nrow(data)
+  if(isNk) k <- floor(ndata*(1-tau))
+  if(isNtau) tau <- 1-k/ndata
+
+  # Estimation of the tail index for X using the Hill estimator
+  estHill <- HTailIndex(data[,1], k, var, varType, bias, bigBlock, smallBlock, alpha)
+  gammaHatX <- estHill$gammaHat - estHill$BiasGamHat
+  # Estimation of the tail index for Y using the Hill estimator
+  gammaHatY <- HTailIndex(data[,2], k)$gammaHat
+  # Estimation of the extreme level if requested
+  if(is.null(tau1)) tau1 <- estExtLevel(alpha_n, gammaHat=gammaHatY)$tauHat
+  # Expectile-Based Esitmation
+  if(method=="LAWS"){
+    ExpctHat <- estExpectiles(data[,2], tau)$ExpctHat
+    # Estimation of the EB marginal Expected Shortfall @ the intermediate level
+    XMESt <- EBmarExpShortF(data, tau, ndata, ExpctHat)
+    # Estimation of the Expectile-EB marginal Expected Shortfall @ the extreme level
+    XMESt1 <- ((1-tau1)/(1-tau))^(-gammaHatX) * XMESt
+  }
+  # Quantile-Based Estimation
+  if(method=="QB"){
+    # Estimation of the QB marginal Expected Shortfall @ the intermediate level
+    QMESt <- QuantMES(data, NULL, tau1, k=k)$HatQMES
+    # Estimation of the Expectile-QB marginal Expected Shortfall @ the extreme level
+    XMESt1 <- (1/gammaHatY - 1)^(-gammaHatX) * QMESt
+  }
+  # Compute an estimate of the asymptotic variance of the expecile estimator at the extreme level
+  if(var){
+    # Computes the asymptotic variance for independent and serial dependent data
+    VarHatXMES <- estHill$VarGamHat
+    # Computes the "margin error"
+    K <- sqrt(VarHatXMES)*log((1-tau)/(1-tau1))/sqrt(k)
+    # compute lower and upper bounds of the (1-alpha)% CI
+    lbound <- XMESt1 * exp(qnorm(alpha/2)*K)
+    ubound <- XMESt1 * exp(qnorm(1-alpha/2)*K)
+    # defines the (1-alpha)% CI
+    CIHatXMES <- c(lbound, ubound)
+  }
+  return(list(HatXMES=XMESt1, VarHatXMES=VarHatXMES, CIHatXMES=CIHatXMES))
+}
+
 
 #########################################################
 ### END

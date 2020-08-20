@@ -1,14 +1,23 @@
-export(MomTailIndex, MLTailIndex, HTailIndex, EBTailIndex, extQuantile, estExpectiles, predExpectiles, expectiles, rtimeseries, estExtLevel, QuantMES, ExpectMES,
-rbtimeseries)
+export(MomTailIndex, MLTailIndex, HTailIndex, EBTailIndex, extQuantile, estExpectiles, predExpectiles, expectiles, rtimeseries, estMultiExpectiles, predMultiExpectiles, estExtLevel, QuantMES, ExpectMES, rbtimeseries, HypoTesting, MultiHTailIndex, extMultiQuantile, rmdata)
 
 importFrom("stats", "df", "qf", "dnorm", "dt", "ecdf", "integrate", "optim",
            "pnorm", "pt", "quantile", "rnorm", "runif", "dunif", "uniroot",
            "var", "rpois", "dpois", "rbeta", "dbeta", "dnbinom", "pexp", "qt", 
 	   "qchisq", "pbeta", "qnorm", "cov", "rnbinom", "rt", "rbinom", "acf")
 
+importFrom("graphics", "par", "text", "legend", "lines", "points")
+
+importFrom("utils", "combn")
+
 importFrom("evd", "rbvevd", "abvnonpar", "amvnonpar", "pfrechet", "pgumbel", 
 	   "pgev", "abvevd", "hbvevd", "rgpd", "rfrechet", "pgpd", "qgpd")
 
 importFrom("mvtnorm", "rmvt", "rmvnorm")
 
-importFrom("copula", "rCopula", "gumbelCopula", "normalCopula")
+importFrom("tmvtnorm", "rtmvt", "rtmvnorm")
+
+importFrom("plot3D", "scatter3D", "points3D")
+
+importFrom("copula", "rCopula", "claytonCopula", "gumbelCopula", "frankCopula", "normalCopula")
+
+importFrom("pracma", "sqrtm")

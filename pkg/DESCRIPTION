@@ -1,12 +1,12 @@
 Package: ExtremeRisks
 Version: 0.0.4
-Date: 2020-08-17
+Date: 2020-08-26
 Title: Extreme Risk Measures
 Authors@R: c(person("Simone","Padoan", role = c("cre","aut"), email="simone.padoan@unibocconi.it"),
 	    person("Gilles", "Stupfler", role = "aut", email="gilles.stupfler@ensai.fr"),
             person("Bocconi Institute for Data Science and Analytics", role = "fnd"),
             person("French National Research", role = "fnd", comment = "grant ANR-19-CE40-0013-01/ExtremReg"))
-Author: Simone Padoan [cre, aut], Gilles Stupfler [aut]
+Author: Simone Padoan [cre, aut], Gilles Stupfler [aut], Bocconi Institute for Data Science and Analytics [fnd], French National Research [fnd] (grant ANR-19-CE40-0013-01/ExtremReg) 
 Maintainer: Simone Padoan <simone.padoan@unibocconi.it>
 Imports: evd, copula, mvtnorm, plot3D, tmvtnorm, pracma
 Depends: R (>= 3.5.0)
@@ -16,4 +16,4 @@ URL: mypage.unibocconi.it/simonepadoan/
 NeedsCompilation: yes
 Repository: R-Forge
 Repository/R-Forge/Project: Extreme Risk Measures
-Packaged: 2020-08-20 11:07:55 UTC; padoan
+Packaged: 2020-08-26 06:59:38 UTC; padoan

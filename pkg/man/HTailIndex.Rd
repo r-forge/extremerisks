@@ -41,7 +41,7 @@ HTailIndex(data, k, var=FALSE, varType="asym-Dep", bias=FALSE, bigBlock=NULL,
 }
 
 \references{
-  Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{http://arxiv.org/abs/2004.04078}.
+  Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{https://arxiv.org/abs/2004.04078}.
 
   de Haan, L., Mercadier, C. and Zhou, C. (2016). Adapting extreme value statistics
   tonancial time series: dealing with bias and serial dependence. \emph{Finance and Stochastics},

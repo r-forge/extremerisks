@@ -40,7 +40,7 @@ rtimeseries(ndata, dist="studentT", type="AR", par, burnin=1e+03)
 \references{
 Brockwell, Peter J., and Richard A. Davis. (2016). Introduction to time series and forecasting. \emph{Springer}.
 
-Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{http://arxiv.org/abs/2004.04078}.
+Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{https://arxiv.org/abs/2004.04078}.
 }
 
 \author{

@@ -101,5 +101,7 @@ expectHat <- predMultiExpectiles(data, tau, tau1, var=TRUE)
 expectHat$ExpctHat
 expectHat$VarCovEHat
 # run the following command to see the graphical representation
-# expectHat <- predMultiExpectiles(data, tau, tau1, var=TRUE, plot=TRUE)
+\donttest{
+ expectHat <- predMultiExpectiles(data, tau, tau1, var=TRUE, plot=TRUE)
+}
 }

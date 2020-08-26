@@ -38,7 +38,7 @@ MLTailIndex(data, k, var=FALSE, varType="asym-Dep", bigBlock=NULL,
 }
 
 \references{
-  Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{http://arxiv.org/abs/2004.04078}.
+  Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{https://arxiv.org/abs/2004.04078}.
 
   Drees, H. (2000). Weighted approximations of tail processes for \eqn{\beta}{beta}-mixing random variables.
   \emph{Annals of Applied Probability}, \bold{10}, 1274-1301.

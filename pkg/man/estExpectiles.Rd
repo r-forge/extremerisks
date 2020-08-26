@@ -36,14 +36,14 @@ estExpectiles(data, tau, method="LAWS", tailest="Hill", var=FALSE, varType="asym
 \value{
   A list with elements:
     \itemize{
-	  \item \code{ExpctHat}: an estimate of the \eqn{\tau_n}-\emph{th} expecile;
+	  \item \code{ExpctHat}: a point estimate of the \eqn{\tau_n}-\emph{th} expecile;
 	  \item \code{VarExpHat}: an estimate of the asymptotic variance of the expectile estimator;
 	  \item \code{CIExpct}: an estimate of the approximate \eqn{(1-\alpha)100\%} confidence interval for \eqn{\tau_n}-\emph{th} expecile.
 	}
 }
 
 \references{
-Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{http://arxiv.org/abs/2004.04078}.
+Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{https://arxiv.org/abs/2004.04078}.
 
 Daouia, A., Girard, S. and Stupfler, G. (2018). Estimation of tail risk based on extreme expectiles. \emph{Journal of the Royal Statistical Society: Series B}, \bold{80}, 263-292.
 
@@ -64,7 +64,7 @@ properties of random sequences and processes. \emph{Springer}.
 
 \examples{
 # Extreme expectile estimation at the intermediate level tau obtained with
-# 1-dimensional data simulated from am AR(1) with Student-t innovations
+# 1-dimensional data simulated from an AR(1) with Student-t innovations
 
 tsDist <- "studentT"
 tsType <- "AR"

@@ -26,7 +26,7 @@ predExpectiles(data, tau, tau1, method="LAWS", tailest="Hill", var=FALSE,
 }
 
 \details{
-	For a dataset \code{data} of sample size \eqn{n}, an estimate of the \eqn{\tau'_n}-\emph{th} expectile is computed. The estimation of the expectile at the extreme level \code{tau1} (\eqn{\tau'_n}) is indeed meant to be a prediction.  Two estimators are available: the so-called Least Asymmetrically Weighted Squares (LAWS) based estimator and the Quantile-Based (QB) estimator. The definition of both estimators depends on the estimation of the tail index \eqn{\gamma}. Here, \eqn{\gamma} is estimated using the Hill estimation (see \link{HTailIndex} for details) or in alternative using the the expectile based estimator (see \link{EBTailIndex}).
+	For a dataset \code{data} of sample size \eqn{n}, an estimate of the \eqn{\tau'_n}-\emph{th} expectile is computed. The estimation of the expectile at the extreme level \code{tau1} (\eqn{\tau'_n}) is meant to be a prediction beyond the observed sample.  Two estimators are available: the so-called Least Asymmetrically Weighted Squares (LAWS) based estimator and the Quantile-Based (QB) estimator. The definition of both estimators depends on the estimation of the tail index \eqn{\gamma}. Here, \eqn{\gamma} is estimated using the Hill estimation (see \link{HTailIndex} for details) or in alternative using the the expectile based estimator (see \link{EBTailIndex}).
 	The observations can be either independent or temporal dependent. See Section 3.2 in Padoan and Stupfler (2020) for details.
 	\itemize{
 		\item The so-called intermediate level \code{tau} or \eqn{\tau_n} is a sequence of positive reals such that \eqn{\tau_n \to 1}{\tau_n -> 1} as \eqn{n \to \infty}{n -> \infty}. Practically, \eqn{\tau_n \in (0,1)}{\tau_n in (0,1)} is the ratio between \emph{N} (Numerator) and \emph{D} (Denominator). Where \emph{N} is the empirical mean distance of the \eqn{\tau_n}-\emph{th} expectile from the observations smaller than it, and \emph{D} is the empirical mean distance of \eqn{\tau_n}-\emph{th} expectile from all the observations.
@@ -53,7 +53,7 @@ predExpectiles(data, tau, tau1, method="LAWS", tailest="Hill", var=FALSE,
 }
 
 \references{
-Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{http://arxiv.org/abs/2004.04078}.
+Padoan A.S. and Stupfler, G. (2020). Extreme expectile estimation for heavy-tailed time series. \emph{arXiv e-prints} arXiv:2004.04078, \url{https://arxiv.org/abs/2004.04078}.
 
 Daouia, A., Girard, S. and Stupfler, G. (2018). Estimation of tail risk based on extreme expectiles. \emph{Journal of the Royal Statistical Society: Series B}, \bold{80}, 263-292.
 

@@ -97,5 +97,7 @@ est <- MultiHTailIndex(data, k, TRUE)
 est$gammaHat
 est$VarCovGHat
 # run the following command to see the graphical representation
-# est <- MultiHTailIndex(data, k, TRUE, plot=TRUE)
+\donttest{
+ est <- MultiHTailIndex(data, k, TRUE, plot=TRUE)
+}
 }

@@ -102,5 +102,7 @@ extQHat <- extMultiQuantile(data, tau, tau1, TRUE)
 extQHat$ExtQHat
 extQHat$VarCovExQHat
 # run the following command to see the graphical representation
-# extQHat <- extMultiQuantile(data, tau, tau1, TRUE, plot=TRUE)
+\donttest{
+ extQHat <- extMultiQuantile(data, tau, tau1, TRUE, plot=TRUE)
+}
 }

@@ -92,5 +92,7 @@ expectHat <- estMultiExpectiles(data, tau, var=TRUE)
 expectHat$ExpctHat
 expectHat$VarCovEHat
 # run the following command to see the graphical representation
-# expectHat <- estMultiExpectiles(data, tau, var=TRUE, plot=TRUE)
+\donttest{
+ expectHat <- estMultiExpectiles(data, tau, var=TRUE, plot=TRUE)
+}
 }
